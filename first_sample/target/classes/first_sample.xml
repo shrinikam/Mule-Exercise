@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="93b650cf-55d4-49eb-8a3c-cb573a5774f3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="first_sampleFlow" doc:id="c76a4b25-1dce-4e11-ba8c-ff8110f72d35" >
+		<http:listener doc:name="Listener" doc:id="ee030d71-ffac-4405-af06-8eeae84c9533" config-ref="HTTP_Listener_config" path="/hellomule"/>
+		<set-payload value="Hello MuleSoft" doc:name="Set Payload" doc:id="bcd3a94f-fb25-4b41-a5c5-027b27d9c9a0" />
+		<logger level="INFO" doc:name="Logger" doc:id="cd6a3f13-3b7e-495e-8b96-0f73098a4f18" message="Info: Basic Tutorial"/>
+	</flow>
+</mule>
