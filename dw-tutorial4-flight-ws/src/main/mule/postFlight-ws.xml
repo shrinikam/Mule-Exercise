@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postFlight-wsFlow" doc:id="70cdabe5-14f0-40e8-8298-34da1274e8f6" >
+		<http:listener doc:name="Listener" doc:id="4ac9299a-9222-4185-a517-e3ed4e675534" config-ref="HTTP_Listener_config" path="/addFlight"/>
+		<set-payload value='{"Message" : "Flight added Virtually"}' doc:name="Set Payload" doc:id="a6a7621e-ee86-42e6-aed4-44205564f423" />
+		<db:insert doc:name="Insert" doc:id="43e5a8e6-a745-47b9-b984-81354a2fe927" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO american (ID,code,price,departureDate,origin,destination,emptySeats,planeType,totalSeats) VALUES(ID,code,price,departureDate,origin,destination,emptySeats,planeType,totalSeats)]]></db:sql>
+			<db:input-parameters ><![CDATA[{'ID': payload."ID",
+	'code': payload."code",
+	'price': payload."price",
+	'departureDate': payload."departureDate",
+	'origin': payload."origin",
+	'destination': payload."destination",
+	'emptySeats': payload."emptySeats",
+	'planeType': payload."planeType",
+	'totalSeats': payload."totalSeats",
+}]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="81ec30b2-f88d-437e-a34e-2d257073c97c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[{
+	ID: payload as Number,
+	code: payload as String,
+	price: payload as Number,
+	departureDate: payload as String,
+	origin: payload as String,
+	destination: payload as String,
+	emptySeats: payload as Number,
+	plane: {
+		"type": payload as String,
+		totalSeats: payload as Number
+	}
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
